@@ -123,6 +123,26 @@ def check_warm_ache(value):
         raise ValueError("entry must end on the lingering ache (the waiting)")
 
 
+def check_ache_lands_late(value):
+    # The ache must land late: the judge should feel the line build and
+    # only then discover the mother has been waiting all afternoon.
+    # "waiting" has to appear in the second half of the sentence, and
+    # the final clause (after the last comma) must carry it, so the
+    # sentence closes on the ache rather than trailing off into detail.
+    lowered = value.lower()
+    ache_at = lowered.find("waiting")
+    if ache_at < 0:
+        raise ValueError("entry must contain the lingering ache (the waiting)")
+    if ache_at < len(value) // 2:
+        raise ValueError(
+            "entry's lingering ache must land in the second half, not at %d of %d"
+            % (ache_at, len(value))
+        )
+    final_clause = value.rsplit(",", 1)[-1].lower()
+    if "waiting" not in final_clause:
+        raise ValueError("entry must close on the lingering ache in its final clause")
+
+
 def check_avoids_stock_images(value):
     # The brief's own examples and the worn nostalgia moves are not the
     # memory: grandmother's kitchen, summer evening, fresh rice, fireflies,
@@ -157,6 +177,7 @@ CONTENT_CHECKS = (
     check_childhood_memory,
     check_concrete_grounding,
     check_warm_ache,
+    check_ache_lands_late,
     check_avoids_stock_images,
 )
 
